@@ -1,0 +1,17 @@
+.TH hsh 1 "August 2025" "Simple Shell Manual"
+.SH NAME
+hsh \- simple UNIX command interpreter
+.SH SYNOPSIS
+.B hsh
+[\fIcommand\fR] ...
+.SH DESCRIPTION
+The
+.B hsh
+program is a simple UNIX command interpreter that reads commands from either standard input (interactive mode)
+or from a file/pipe (non-interactive mode) and executes them.
+.SH FEATURES
+- Executes commands using PATH
+- Built-in commands: exit
+- Works in interactive and non-interactive mode
+.SH AUTHOR
+Written by Evez Memmedov and collaborators.
