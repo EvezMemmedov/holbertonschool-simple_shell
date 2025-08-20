@@ -1,15 +1,14 @@
 #include "main.h"
-#include <unistd.h>
 
 /**
  * hsh - simple shell loop
  * Return: 0 on success
  */
-int hsh(void)
+int	hsh(void)
 {
-	char *line;
-	char **args;
-	int status = 1;
+	char	*line;
+	char	**args;
+	int		status = 1;
 
 	while (status)
 	{
@@ -21,10 +20,18 @@ int hsh(void)
 			return (0);
 
 		args = split_line(line);
+		if (args == NULL || args[0] == NULL)
+		{
+			free(line);
+			free(args);
+			continue;
+		}
+
 		status = execute(args);
 
 		free(line);
 		free(args);
 	}
+
 	return (0);
 }
