@@ -72,11 +72,11 @@ char *find_command(char *cmd)
 	free(path_copy);
 	return (NULL);
 }
-
 /**
- * execute - executes command with arguments using PATH
+ * execute - executes a command with arguments
  * @args: array of arguments
- * Return: 1 to continue, 0 to exit
+ *
+ * Return: 1 to continue shell, 0 to exit, 127 if command not found
  */
 int execute(char **args)
 {
@@ -95,7 +95,8 @@ int execute(char **args)
 	{
 		char error_msg[100];
 
-		snprintf(error_msg, sizeof(error_msg), "./hsh: 1: %s: not found\n", args[0]);
+		snprintf(error_msg, sizeof(error_msg),
+			"./hsh: 1: %s: not found\n", args[0]);
 		write(STDERR_FILENO, error_msg, strlen(error_msg));
 		return (127);
 	}
@@ -103,7 +104,7 @@ int execute(char **args)
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve(cmd_path, args, environ) == -1)
+		if (execve(cmd_path, args, NULL) == -1)
 		{
 			perror("hsh");
 			free(cmd_path);
@@ -113,11 +114,11 @@ int execute(char **args)
 	else if (pid < 0)
 	{
 		perror("hsh");
+		free(cmd_path);
+		return (1);
 	}
 	else
-	{
 		waitpid(pid, &status, 0);
-	}
 
 	free(cmd_path);
 	return (1);

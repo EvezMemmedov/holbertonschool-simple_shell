@@ -4,11 +4,11 @@
  * hsh - simple shell loop
  * Return: 0 on success
  */
-int	hsh(void)
+int hsh(void)
 {
-	char	*line;
-	char	**args;
-	int		status = 1;
+	char *line;
+	char **args;
+	int status = 1;
 
 	while (status)
 	{
