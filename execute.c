@@ -8,18 +8,20 @@
 #include <stdio.h>
 
 /**
- * find_command - finds command without getenv
+ * find_command - finds command in /bin and /usr/bin manually
  * @cmd: command
  * Return: full path if exists, else NULL
  */
 char *find_command(char *cmd)
 {
+	char *paths[] = {"/bin/", "/usr/bin/", NULL};
+	char *full_path;
+	int i;
 	struct stat st;
 
 	if (!cmd)
 		return (NULL);
 
-	/* tam yol verilmişsə və fayl mövcuddursa */
 	if (cmd[0] == '/' || cmd[0] == '.')
 	{
 		if (stat(cmd, &st) == 0)
@@ -27,7 +29,20 @@ char *find_command(char *cmd)
 		return (NULL);
 	}
 
-	/* PATH yoxlamadan NULL qaytar */
+	for (i = 0; paths[i]; i++)
+	{
+		full_path = malloc(strlen(paths[i]) + strlen(cmd) + 1);
+		if (!full_path)
+			return (NULL);
+		strcpy(full_path, paths[i]);
+		strcat(full_path, cmd);
+
+		if (stat(full_path, &st) == 0)
+			return (full_path);
+
+		free(full_path);
+	}
+
 	return (NULL);
 }
 
