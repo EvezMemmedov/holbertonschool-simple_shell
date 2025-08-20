@@ -93,7 +93,10 @@ int execute(char **args)
 	cmd_path = find_command(args[0]);
 	if (!cmd_path)
 	{
-		dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", args[0]);
+		char error_msg[100];
+
+		snprintf(error_msg, sizeof(error_msg), "./hsh: 1: %s: not found\n", args[0]);
+		write(STDERR_FILENO, error_msg, strlen(error_msg));
 		return (127);
 	}
 
