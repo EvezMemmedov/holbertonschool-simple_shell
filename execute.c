@@ -93,8 +93,8 @@ int execute(char **args)
 	cmd_path = find_command(args[0]);
 	if (!cmd_path)
 	{
-		perror("hsh");
-		return (1);
+		dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", args[0]);
+		return (127);
 	}
 
 	pid = fork();
