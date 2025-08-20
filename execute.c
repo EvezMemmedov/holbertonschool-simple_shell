@@ -9,6 +9,23 @@
 extern char **environ;
 
 /**
+ * get_path - retrieves PATH from environ without getenv
+ * Return: pointer to PATH string or NULL
+ */
+char *get_path(void)
+{
+	int i = 0;
+
+	while (environ[i])
+	{
+		if (strncmp(environ[i], "PATH=", 5) == 0)
+			return (environ[i] + 5);
+		i++;
+	}
+	return (NULL);
+}
+
+/**
  * find_command - searches for command in PATH
  * @cmd: command name
  * Return: full path if found, else NULL
@@ -25,7 +42,7 @@ char *find_command(char *cmd)
 	if (access(cmd, X_OK) == 0)
 		return (strdup(cmd));
 
-	path = getenv("PATH");
+	path = get_path();
 	if (!path)
 		return (NULL);
 
