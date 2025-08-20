@@ -1,45 +1,25 @@
 #include "main.h"
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
-
-extern char **environ;
-
-/**
- * get_path - retrieves PATH from environ without getenv
- * Return: pointer to PATH string or NULL
- */
-char *get_path(void)
-{
-	int i = 0;
-
-	while (environ[i])
-	{
-		if (strncmp(environ[i], "PATH=", 5) == 0)
-			return (environ[i] + 5);
-		i++;
-	}
-	return (NULL);
-}
+#include <sys/wait.h>
+#include <stdio.h>
 
 /**
- * find_command - searches for command in PATH
- * @cmd: command name
- * Return: full path if found, else NULL
+ * find_command - finds command without getenv
+ * @cmd: command
+ * Return: full path if exists, else NULL
  */
-char	*find_command(char *cmd)
+char *find_command(char *cmd)
 {
-	char	*path, *path_dup, *dir;
-	char	*full_path;
 	struct stat st;
 
 	if (!cmd)
 		return (NULL);
 
+	/* tam yol verilmişsə və fayl mövcuddursa */
 	if (cmd[0] == '/' || cmd[0] == '.')
 	{
 		if (stat(cmd, &st) == 0)
@@ -47,48 +27,20 @@ char	*find_command(char *cmd)
 		return (NULL);
 	}
 
-	path = getenv("PATH");
-	if (!path || path[0] == '\0')
-		return (NULL);
-
-	path_dup = strdup(path);
-	if (!path_dup)
-		return (NULL);
-
-	dir = strtok(path_dup, ":");
-	while (dir)
-	{
-		full_path = malloc(strlen(dir) + strlen(cmd) + 2);
-		if (!full_path)
-		{
-			free(path_dup);
-			return (NULL);
-		}
-		sprintf(full_path, "%s/%s", dir, cmd);
-		if (stat(full_path, &st) == 0)
-		{
-			free(path_dup);
-			return (full_path);
-		}
-		free(full_path);
-		dir = strtok(NULL, ":");
-	}
-
-	free(path_dup);
+	/* PATH yoxlamadan NULL qaytar */
 	return (NULL);
 }
 
 /**
- * execute - executes a command with arguments
+ * execute - executes the command with arguments
  * @args: array of arguments
- *
- * Return: 1 to continue shell, 0 to exit, 127 if command not found
+ * Return: 1 to continue, 0 to exit
  */
 int execute(char **args)
 {
-	pid_t	pid;
-	int		status;
-	char	*cmd_path;
+	pid_t pid;
+	int status;
+	char *cmd_path;
 
 	if (!args || !args[0])
 		return (1);
@@ -102,7 +54,7 @@ int execute(char **args)
 		char error_msg[100];
 
 		snprintf(error_msg, sizeof(error_msg),
-			"./hsh: 1: %s: not found\n", args[0]);
+			 "./hsh: 1: %s: not found\n", args[0]);
 		write(STDERR_FILENO, error_msg, strlen(error_msg));
 		return (127);
 	}
