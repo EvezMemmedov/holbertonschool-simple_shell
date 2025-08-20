@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 extern char **environ;
 
@@ -30,55 +31,60 @@ char *get_path(void)
  * @cmd: command name
  * Return: full path if found, else NULL
  */
-char *find_command(char *cmd)
+char	*find_command(char *cmd)
 {
-	char *path, *dir, *full_path;
-	char *path_copy;
-	size_t len;
+	char	*path, *path_dup, *dir;
+	char	*full_path;
+	struct stat st;
 
 	if (!cmd)
 		return (NULL);
 
-	if (access(cmd, X_OK) == 0)
-		return (strdup(cmd));
+	if (cmd[0] == '/' || cmd[0] == '.')
+	{
+		if (stat(cmd, &st) == 0)
+			return (strdup(cmd));
+		return (NULL);
+	}
 
-	path = get_path();
-	if (!path)
+	path = getenv("PATH");
+	if (!path || path[0] == '\0')
 		return (NULL);
 
-	path_copy = strdup(path);
-	if (!path_copy)
+	path_dup = strdup(path);
+	if (!path_dup)
 		return (NULL);
 
-	dir = strtok(path_copy, ":");
+	dir = strtok(path_dup, ":");
 	while (dir)
 	{
-		len = strlen(dir) + strlen(cmd) + 2;
-		full_path = malloc(len);
+		full_path = malloc(strlen(dir) + strlen(cmd) + 2);
 		if (!full_path)
 		{
-			free(path_copy);
+			free(path_dup);
 			return (NULL);
 		}
-		snprintf(full_path, len, "%s/%s", dir, cmd);
-		if (access(full_path, X_OK) == 0)
+		sprintf(full_path, "%s/%s", dir, cmd);
+		if (stat(full_path, &st) == 0)
 		{
-			free(path_copy);
+			free(path_dup);
 			return (full_path);
 		}
 		free(full_path);
 		dir = strtok(NULL, ":");
 	}
-	free(path_copy);
+
+	free(path_dup);
 	return (NULL);
 }
+
 /**
  * execute - executes a command with arguments
  * @args: array of arguments
  *
  * Return: 1 to continue shell, 0 to exit, 127 if command not found
  */
-int	execute(char **args)
+int execute(char **args)
 {
 	pid_t	pid;
 	int		status;
