@@ -1,14 +1,11 @@
 #include "main.h"
+#include <unistd.h>
 
 /**
- * main - Simple shell loop
- * @argc: argument count (unused)
- * @argv: argument vector (unused)
- *
+ * hsh - simple shell loop
  * Return: 0 on success
  */
-int main(__attribute__((unused)) int argc,
-	 __attribute__((unused)) char **argv)
+int hsh(void)
 {
 	char *line;
 	char **args;
@@ -16,22 +13,18 @@ int main(__attribute__((unused)) int argc,
 
 	while (status)
 	{
-		write(STDOUT_FILENO, "$ ", 2);
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "$ ", 2);
 
 		line = read_line();
 		if (!line)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			break;
-		}
+			return (0);
 
 		args = split_line(line);
-		if (args[0] != NULL)
-			status = execute(args);
+		status = execute(args);
 
 		free(line);
 		free(args);
 	}
-
 	return (0);
 }
