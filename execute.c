@@ -78,11 +78,11 @@ char *find_command(char *cmd)
  *
  * Return: 1 to continue shell, 0 to exit, 127 if command not found
  */
-int execute(char **args)
+int	execute(char **args)
 {
-	pid_t pid;
-	int status;
-	char *cmd_path;
+	pid_t	pid;
+	int		status;
+	char	*cmd_path;
 
 	if (!args || !args[0])
 		return (1);
@@ -121,5 +121,9 @@ int execute(char **args)
 		waitpid(pid, &status, 0);
 
 	free(cmd_path);
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+
 	return (1);
 }
