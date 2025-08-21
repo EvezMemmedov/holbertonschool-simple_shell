@@ -119,6 +119,13 @@ int main(int argc, char **argv)
 			break;
 		}
 		_argv = words(cmd);
+		if (!_argv[0])
+		{
+			free(_argv);
+			free(cmd);
+			line++;
+			continue;
+		}
 		if (strncmp(_argv[0], "exit", 4) == 0)
 		{
 			free(cmd);
