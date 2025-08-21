@@ -61,7 +61,7 @@ int execute(char **args)
 		return (1);
 
 	if (strcmp(args[0], "exit") == 0)
-		return (0);
+		return (-1);
 
 	cmd_path = find_command(args[0]);
 	if (!cmd_path)

@@ -1,37 +1,34 @@
 #include "main.h"
 
 /**
- * hsh - simple shell loop
- * Return: 0 on success
+ * hsh - simple shell main loop
+ * Return: last status
  */
 int hsh(void)
 {
 	char *line;
 	char **args;
-	int status = 1;
+	int status = 1, last_status = 0;
 
 	while (status)
 	{
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "$ ", 2);
-
+		write(STDOUT_FILENO, "$ ", 2);
 		line = read_line();
 		if (!line)
-			return (0);
+			break;
 
 		args = split_line(line);
-		if (args == NULL || args[0] == NULL)
-		{
-			free(line);
-			free(args);
+		free(line);
+
+		if (!args)
 			continue;
-		}
 
 		status = execute(args);
+		if (status != 1)
+			last_status = status;
 
-		free(line);
 		free(args);
 	}
 
-	return (0);
+	return (last_status);
 }
