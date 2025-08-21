@@ -1,33 +1,37 @@
 #include "main.h"
 
 /**
- * execute - proqramı işə salır
- * @args: argumentlər array
- *
- * Return: 1 (davam etsin)
+ * execute - executes command
+ * @args: command and arguments
+ * Return: 1 on success
  */
 int execute(char **args)
 {
 	pid_t pid;
 	int status;
 
-	if (args[0] == NULL)
-		return (1);
+	if (strcmp(args[0], "exit") == 0)
+		return (0);
 
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execvp(args[0], args) == -1)
-			perror("hsh");
+		if (execve(args[0], args, NULL) == -1)
+		{
+			perror("./hsh");
+		}
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
 	{
-		perror("hsh");
+		perror("fork");
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
+		do {
+			waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
+
 	return (1);
 }

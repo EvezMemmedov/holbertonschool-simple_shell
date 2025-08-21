@@ -1,39 +1,28 @@
 #include "main.h"
-#include <unistd.h>
-#include <stdlib.h>
 
 /**
- * hsh - sadə shell loop
+ * hsh - simple shell
  * Return: 0
  */
-int	hsh(void)
+int hsh(void)
 {
-	char	*line;
-	char	**args;
-	int	status = 1;
+	char *line;
+	char **args;
+	int status = 1;
 
-	while (status)
+	while (1)
 	{
-		write(STDOUT_FILENO, "$ ", 2);
-
 		line = read_line();
 		if (!line)
-		{
-			free(line);
 			break;
-		}
 
 		args = split_line(line);
-		if (!args)
-		{
-			free(line);
-			continue;
-		}
-
-		status = execute(args);
+		if (args[0] != NULL)
+			status = execute(args);
 
 		free(line);
 		free(args);
 	}
-	return (0);
+
+	return (status);
 }

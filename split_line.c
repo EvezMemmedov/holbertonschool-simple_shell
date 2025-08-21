@@ -1,39 +1,39 @@
 #include "main.h"
 
 /**
- * split_line - string-i tokenlərə ayırır
- * @line: istifadəçi input
- *
- * Return: string array
+ * split_line - splits a line into words
+ * @line: input line
+ * Return: array of words
  */
 char **split_line(char *line)
 {
 	int bufsize = 64, i = 0;
-	char **tokens = malloc(sizeof(char *) * bufsize);
+	char **tokens = malloc(bufsize * sizeof(char *));
 	char *token;
 
 	if (!tokens)
 	{
-		perror("allocation error");
-		exit(1);
+		perror("malloc");
+		exit(EXIT_FAILURE);
 	}
 
-	token = strtok(line, " \t\r\n");
-	while (token)
+	token = strtok(line, " \t\r\n\a");
+	while (token != NULL)
 	{
 		tokens[i++] = token;
 
 		if (i >= bufsize)
 		{
 			bufsize += 64;
-			tokens = realloc(tokens, sizeof(char *) * bufsize);
+			tokens = realloc(tokens, bufsize * sizeof(char *));
 			if (!tokens)
 			{
-				perror("allocation error");
-				exit(1);
+				perror("realloc");
+				exit(EXIT_FAILURE);
 			}
 		}
-		token = strtok(NULL, " \t\r\n");
+
+		token = strtok(NULL, " \t\r\n\a");
 	}
 	tokens[i] = NULL;
 	return (tokens);

@@ -8,10 +8,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+int hsh(void);
 char *read_line(void);
 char **split_line(char *line);
 int execute(char **args);
-
-int hsh(void);
 
 #endif /* MAIN_H */
