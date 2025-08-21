@@ -6,5 +6,5 @@
  */
 int main(void)
 {
-    return (hsh());
+	return (hsh());
 }
