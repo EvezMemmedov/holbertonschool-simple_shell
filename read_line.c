@@ -1,27 +1,25 @@
 #include "main.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
- * read_line - oxuyur inputdan
- *
- * Return: string (line)
+ * read_line - istifadəçidən sətir oxuyur
+ * Return: oxunan sətir
  */
-char *read_line(void)
+char	*read_line(void)
 {
-	char *line = NULL;
-	size_t bufsize = 0;
+	char	*buffer = NULL;
+	size_t	bufsize = 0;
+	ssize_t	nread;
 
-	if (getline(&line, &bufsize, stdin) == -1)
+	nread = getline(&buffer, &bufsize, stdin);
+	if (nread == -1)
 	{
-		if (feof(stdin))
-		{
-			free(line);
-			exit(0);
-		}
-		else
-		{
-			perror("read_line");
-			exit(1);
-		}
+		free(buffer);
+		return (NULL);
 	}
-	return (line);
+	if (buffer[nread - 1] == '\n')
+		buffer[nread - 1] = '\0';
+	return (buffer);
 }
+
